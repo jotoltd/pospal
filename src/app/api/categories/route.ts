@@ -1,0 +1,33 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getVenueId } from "@/lib/supabase/api-helpers";
+
+export async function GET() {
+  const { supabase, venueId, error } = await getVenueId();
+  if (error) return error;
+  const { data } = await supabase.from("categories").select("*").eq("venue_id", venueId).order("sort_order").order("name");
+  return NextResponse.json(data ?? []);
+}
+
+export async function POST(req: NextRequest) {
+  const { supabase, venueId, error } = await getVenueId();
+  if (error) return error;
+  const body = await req.json();
+  const { data } = await supabase.from("categories").insert({ venue_id: venueId, name: body.name, sort_order: body.sort_order ?? 0 }).select().single();
+  return NextResponse.json(data, { status: 201 });
+}
+
+export async function PUT(req: NextRequest) {
+  const { supabase, venueId, error } = await getVenueId();
+  if (error) return error;
+  const body = await req.json();
+  const { data } = await supabase.from("categories").update({ name: body.name, sort_order: body.sort_order ?? 0 }).eq("id", body.id).eq("venue_id", venueId).select().single();
+  return NextResponse.json(data);
+}
+
+export async function DELETE(req: NextRequest) {
+  const { supabase, venueId, error } = await getVenueId();
+  if (error) return error;
+  const id = new URL(req.url).searchParams.get("id");
+  await supabase.from("categories").delete().eq("id", id!).eq("venue_id", venueId);
+  return NextResponse.json({ success: true });
+}
