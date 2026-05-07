@@ -24,9 +24,9 @@ const VenueContext = createContext<VenueContextValue>({
 export function VenueProvider({ children }: { children: React.ReactNode }) {
   const [venue, setVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   const fetchVenue = useCallback(async () => {
+    const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setLoading(false); return; }
 
@@ -38,7 +38,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
 
     setVenue(data ?? null);
     setLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     fetchVenue();
