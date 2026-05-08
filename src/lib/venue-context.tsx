@@ -30,6 +30,22 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setLoading(false); return; }
 
+    // Check for admin impersonation
+    const impersonatingId = typeof window !== "undefined" 
+      ? localStorage.getItem("admin_impersonating") 
+      : null;
+
+    if (impersonatingId && user.email === "hello@pospal.co.uk") {
+      const { data } = await supabase
+        .from("venues")
+        .select("id, name, plan")
+        .eq("id", impersonatingId)
+        .single();
+      setVenue(data ?? null);
+      setLoading(false);
+      return;
+    }
+
     const { data } = await supabase
       .from("venues")
       .select("id, name, plan")
