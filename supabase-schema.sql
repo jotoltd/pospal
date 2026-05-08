@@ -237,6 +237,7 @@ alter table parked_orders enable row level security;
 alter table shifts enable row level security;
 
 -- Venues: owner only
+drop policy if exists "venues_owner" on venues;
 create policy "venues_owner" on venues
   for all using (auth.uid() = owner_id);
 
@@ -249,35 +250,46 @@ returns boolean as $$
 $$ language sql security definer;
 
 -- Per-table RLS policies using the helper
+drop policy if exists "settings_venue" on settings;
 create policy "settings_venue" on settings
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "staff_venue" on staff;
 create policy "staff_venue" on staff
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "categories_venue" on categories;
 create policy "categories_venue" on categories
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "menu_items_venue" on menu_items;
 create policy "menu_items_venue" on menu_items
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "orders_venue" on orders;
 create policy "orders_venue" on orders
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "order_items_venue" on order_items;
 create policy "order_items_venue" on order_items
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "customers_venue" on customers;
 create policy "customers_venue" on customers
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "discount_codes_venue" on discount_codes;
 create policy "discount_codes_venue" on discount_codes
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "refunds_venue" on refunds;
 create policy "refunds_venue" on refunds
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "parked_orders_venue" on parked_orders;
 create policy "parked_orders_venue" on parked_orders
   for all using (user_owns_venue(venue_id));
 
+drop policy if exists "shifts_venue" on shifts;
 create policy "shifts_venue" on shifts
   for all using (user_owns_venue(venue_id));
